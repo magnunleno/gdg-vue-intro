@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 00 - Introdução</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Personagens</h1>
+      <div>
+        <ul v-if="personagens.length > 0">
+          <li v-for="personagem in personagens">
+            {{ personagem.nome }} (Genero: {{ personagem.genero }})
+          </li>
+        </ul>
+        <div v-else>
+          Não foi encontrado nenhum personagem
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          personagens: []
+        },
+        created () {
+          let url = '/swapi/people.json'
+          axios.get(url)
+            .then(response => {
+              this.personagens = response.data.results.map(o => {
+                return { nome: o.name, genero: o.gender == 'male' ? 'masculino' : 'feminino' }
+              });
+            })
+            .catch(err => console.log('Err', err));
+        }
+      });
+    </script>
+  </body>
+</html>
