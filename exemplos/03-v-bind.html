@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 00 - Introdução</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>V-bind</h1>
+
+      <input v-model="mensagem">
+      <p v-bind:title="mensagem">Ponha o mouse sobre mim!</p>
+
+      <p v-bind:class="{ 'red-text': isActive }">Meu texto muda de cor!</p>
+      <button v-on:click="mudaCor">Mudar cor do texto!</button>
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          mensagem: 'Título dinâmico!',
+          isActive: false
+        },
+        methods: {
+          mudaCor () {
+            this.isActive = !this.isActive;
+          }
+        }
+      });
+    </script>
+
+  <style>
+    .red-text {
+      color: red;
+    }
+  </style>
+  </body>
+</html>

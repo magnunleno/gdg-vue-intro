@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 02 - v-model</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Seja Bem Vindo ao {{ nome }}</h1>
+      <input v-model="nome" />
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          nome: 'GDG Brasília'
+        }
+      });
+    </script>
+  </body>
+</html>

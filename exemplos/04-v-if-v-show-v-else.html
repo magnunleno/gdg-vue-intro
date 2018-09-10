@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 00 - Introdução</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>V-if, v-else, v-if-else, v-show</h1>
+
+      <p v-if="showP1">Este texto é removido do DOM.</p>
+      <button @click="showP1 = !showP1">{{ showP1 ? 'Ocultar' : 'Mostrar' }} paragrafo 1</button>
+      <hr />
+
+      <p v-show="showP2">Este texto NÃO é removido do DOM.</p>
+      <button @click="showP2 = !showP2">{{ showP2 ? 'Ocultar' : 'Mostrar' }} paragrafo 2</button>
+      <hr />
+
+      <p v-if="showP3">If...</p>
+      <p v-else>else...</p>
+      <button @click="showP3 = !showP3">Mostrar {{ showP3 ? 'else' : 'if' }}</button>
+      <hr />
+
+      <p v-if="valor > 0">Positivo</p>
+      <p v-else-if="valor < 0">Negativo</p>
+      <p v-else-if="valor === 0">Zero</p>
+      <p v-else>Deconhecido</p>
+      <input v-model="valor" />
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          valor: 0,
+          showP1: true,
+          showP2: true,
+          showP3: true
+        }
+      });
+    </script>
+  </body>
+</html>

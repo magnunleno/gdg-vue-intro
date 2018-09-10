@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js 00 - Introdução</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Meu contador: {{ count }}</h1>
+      <button v-on:click="incrementar">Incrementar</button>
+      <button v-on:click="decrementar">Decrementar</button>
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          count: 0
+        },
+        methods: {
+          incrementar () { this.count = this.count + 1 },
+          decrementar () { this.count = this.count - 1 }
+        },
+        // TODO: Mostrar a diferença entre computed property e watcher
+        watch: {
+          count (newVal, oldVal) {
+            console.log('Changed', oldVal, newVal)
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
