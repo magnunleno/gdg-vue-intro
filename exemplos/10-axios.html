@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Vue.js 00 - Introdução</title>
+    <title>Vue.js 10 - Axios</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
@@ -28,7 +28,7 @@
           personagens: []
         },
         created () {
-          let url = '/swapi/people.json'
+          let url = 'swapi/people.json'
           axios.get(url)
             .then(response => {
               this.personagens = response.data.results.map(o => {

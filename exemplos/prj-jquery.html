@@ -9,12 +9,48 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>Lista de Compras</title>
+    <style>
+      .shop-item {
+        cursor: pointer;
+        height: 60px;
+      }
+      .shop-item-text {
+        position: relative;
+        top: 18%;
+        float: left;
+      }
+    </style>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-      <img src="/static/shopping-icon.png" width="30" height="30" alt="" />
-      <a class="navbar-brand" href="#" style="color: #eeeeee">Lista de Compras</a>
-    </nav>
+  <body style="background-color: #e2e2e2">
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <img src="static/shopping-icon.png" width="30" height="30" alt="" />
+          <strong style="margin-left: 1em;">Lista de Compras</strong>
+        </a>
+      </div>
+    </div>
+
+    <div class="px-3 py-3 pb-md-4 mx-auto" style="max-width: 700px">
+      <h2 class="display-4 text-center">Compras</h2>
+
+      <ul class="list-group">
+        <li class="shop-item list-group-item list-group-item-action">
+          <div class="shop-item-text">Cras justo odio</div>
+          <button type="button" class="btn btn-primary btn-sm" style="float: right;">Small button</button>
+        </li>
+        <li class="shop-item list-group-item list-group-item-action">
+          Cras justo odio
+        </li>
+        <li class="shop-item list-group-item list-group-item-action">
+          Cras justo odio
+        </li>
+        <li class="shop-item list-group-item list-group-item-action">
+          Cras justo odio
+        </li>
+      </ul>
+
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

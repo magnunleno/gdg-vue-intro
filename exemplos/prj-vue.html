@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <title>Lista de Compras</title>
+    <style>
+      .shop-item {
+        height: 60px;
+      }
+      .shop-item-text {
+        position: relative;
+        top: 18%;
+        float: left;
+      }
+      .shop-item-text.checked {
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body style="background-color: #e2e2e2">
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <img src="static/shopping-icon.png" width="30" height="30" alt="" />
+          <strong style="margin-left: 1em;">Lista de Compras</strong>
+        </a>
+      </div>
+    </div>
+
+    <div class="px-3 py-3 pb-md-4 mx-auto" style="max-width: 700px" id="app">
+      <h2 class="display-4 text-center">Compras</h2>
+
+      <ul class="list-group">
+        <template v-if="lista.length > 0">
+          <ul class="nav nav-pills" style="margin-bottom: 0.5em">
+            <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'todas' }" href="" @click.prevent="filtro = 'todas'">Todas</a></li>
+            <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'pendentes' }" href="" @click.prevent="filtro = 'pendentes'">Pendentes</a></li>
+            <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'compradas' }" href="" @click.prevent="filtro = 'compradas'">Compradas</a></li>
+          </ul>
+          <li class="shop-item list-group-item" v-for="(item, index) in listaFiltrada">
+            <div class="shop-item-text" :class="{ 'checked': item.checked }">{{ item.nome }} <span style="color: grey">(R$ {{ item.valor }})</span></div>
+            <div class="btn-group" role="group" aria-label="Basic example" style="float: right;">
+              <button @click="comprado(item)" type="button" class="btn btn-secondary btn-sm"><span class="oi oi-check"></span></button>
+              <button @click="remove(item)" type="button" class="btn btn-danger btn-sm"><span class="oi oi-trash"></span></button>
+            </div>
+          </li>
+          <li class="shop-item list-group-item">
+            Total: R$ {{ totalLista }} / Total Comprado: R$ {{ totalComprado }}
+          </li>
+        </template>
+        <template v-else>
+          <li class="list-group-item list-group-item-action disabled">Desculpe, nenhum item cadastrado...</li>
+        </template>
+      </ul>
+
+      <form style="margin-top: 3em" @submit.prevent="adicionar">
+        <h3>Novo Item</h3>
+        <div class="form-row align-items-center">
+          <div class="col-auto">
+            <label class="sr-only">Item</label>
+            <input type="text" class="form-control mb-2" v-model="novoItem">
+          </div>
+          <div class="col-auto">
+            <label class="sr-only">Valor</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend"><div class="input-group-text">R$</div></div>
+              <input type="number" class="form-control" v-model="novoItemValor">
+            </div>
+          </div>
+          <div class="col">
+            <button type="submit" class="btn btn-primary mb-2" style="width: 100%">Inserir</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script type="text/javascript">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          filtro: 'todas',
+          novoItem: '',
+          novoItemValor: 0.0,
+          lista: []
+        },
+        methods: {
+          comprado (item) { item.checked = !item.checked },
+          remove (item) {
+            let index = this.lista.findIndex(i => i === item);
+            this.lista.splice(index, 1);
+          },
+          adicionar () {
+            if (this.novoItem.length == 0 || this.novoItemValor <= 0.0) {
+              return
+            }
+            this.lista.push({
+              nome: this.novoItem,
+              valor: Number(this.novoItemValor),
+              checked: false
+            })
+            this.novoItemValor= 0.0
+            this.novoItem = ""
+          }
+        },
+        computed: {
+          listaFiltrada () {
+            if (this.filtro == 'todas') {
+              return this.lista
+            } else if (this.filtro == 'pendentes') {
+              return this.lista.filter(i => !i.checked)
+            } else if (this.filtro === 'compradas') {
+              return this.lista.filter(i => i.checked)
+            }
+          },
+          totalLista () {
+            return this.lista.reduce((total, item) => total + item.valor, 0.0)
+          },
+          totalComprado () {
+            return this.lista.filter(i => i.checked).reduce((total, item) => total + item.valor, 0.0)
+          }
+        }
+      });
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

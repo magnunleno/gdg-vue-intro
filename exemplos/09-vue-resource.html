@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Vue.js 00 - Introdução</title>
+    <title>Vue.js 09 - Vue-Resource</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
   </head>
@@ -28,7 +28,7 @@
           personagens: []
         },
         created () {
-          let url = '/swapi/people.json'
+          let url = 'swapi/people.json'
           this.$http.get(url)
             .then(data => data.json())
             .then(data => {
