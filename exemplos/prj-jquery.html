@@ -7,17 +7,21 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 
     <title>Lista de Compras</title>
     <style>
       .shop-item {
-        cursor: pointer;
         height: 60px;
       }
       .shop-item-text {
         position: relative;
         top: 18%;
         float: left;
+      }
+      .shop-item-text.checked {
+        text-decoration: line-through;
       }
     </style>
   </head>
@@ -31,30 +35,175 @@
       </div>
     </div>
 
-    <div class="px-3 py-3 pb-md-4 mx-auto" style="max-width: 700px">
+    <div class="px-3 py-3 pb-md-4 mx-auto" style="max-width: 700px" id="app">
       <h2 class="display-4 text-center">Compras</h2>
 
       <ul class="list-group">
-        <li class="shop-item list-group-item list-group-item-action">
-          <div class="shop-item-text">Cras justo odio</div>
-          <button type="button" class="btn btn-primary btn-sm" style="float: right;">Small button</button>
-        </li>
-        <li class="shop-item list-group-item list-group-item-action">
-          Cras justo odio
-        </li>
-        <li class="shop-item list-group-item list-group-item-action">
-          Cras justo odio
-        </li>
-        <li class="shop-item list-group-item list-group-item-action">
-          Cras justo odio
-        </li>
+        <div id="listaComprasWrapper" style="display: none">
+          <ul class="nav nav-pills" style="margin-bottom: 0.5em" id="filtros">
+            <li class="nav-item"><a class="nav-link active" data-filtro="todas" href="">Todas</a></li>
+            <li class="nav-item"><a class="nav-link" data-filtro="pendentes" href="">Pendentes</a></li>
+            <li class="nav-item"><a class="nav-link" data-filtro="compradas" href="">Compradas</a></li>
+          </ul>
+
+          <div id="listaCompras"></div>
+
+          <li class="shop-item list-group-item">
+            Total: R$ <span id="total"></span> / Total Comprado: R$ <span id="totalComprado"></span>
+          </li>
+        </div>
+
+        <div id="listaComprasVazia">
+          <li class="list-group-item list-group-item-action disabled">Desculpe, nenhum item cadastrado...</li>
+        </div>
       </ul>
 
+      <form style="margin-top: 3em" id="novoItemForm">
+        <h3>Novo Item</h3>
+        <div class="form-row align-items-center">
+          <div class="col-auto">
+            <label class="sr-only">Item</label>
+            <input type="text" class="form-control mb-2" id="novoItem">
+          </div>
+          <div class="col-auto">
+            <label class="sr-only">Valor</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend"><div class="input-group-text">R$</div></div>
+              <input type="number" step=".01" min="0" class="form-control" id="novoItemValor">
+            </div>
+          </div>
+          <div class="col">
+            <button type="submit" class="btn btn-primary mb-2" style="width: 100%">Inserir</button>
+          </div>
+        </div>
+      </form>
     </div>
+
+    <script type="text/javascript">
+      var filtro = 'todas';
+      var lista = [];
+
+      // Elementos DOM
+      var novoItemValorEl = $('#novoItemValor');
+      var novoItemEl = $('#novoItem');
+
+      var totalEl = $('#total');
+      var totalCompradoEl = $('#totalComprado');
+      var filtrosEl = $('#filtros .nav-link');
+      var listaComprasEl = $('#listaCompras');
+      var listaComprasWrapperEl = $('#listaComprasWrapper');
+      var listaComprasVaziaEl = $('#listaComprasVazia');
+      var novoItemFormEl = $('#novoItemForm');
+
+      function mostraLista () {
+        if (lista.length > 0) {
+          listaComprasWrapperEl.show();
+          listaComprasVaziaEl.hide();
+        } else {
+          listaComprasWrapperEl.hide();
+          listaComprasVaziaEl.show();
+        }
+      }
+
+      function removerItem (item) {
+        return function () {
+          var index = lista.findIndex(i => i == item);
+          lista.splice(index, 1);
+          redesenhaLista();
+          recalculaTotalizadores();
+        }
+      }
+
+      function marcarComprado (item) {
+        return function () {
+          item.checked = !item.checked;
+          redesenhaLista();
+          recalculaTotalizadores();
+        }
+      }
+
+      function recalculaTotalizadores () {
+        var totalComprado = lista.filter(i => i.checked).reduce((total, i) => total + i.valor, 0.0);
+        var total = lista.reduce((total, i) => total + i.valor, 0.0);
+        totalCompradoEl.html(totalComprado.toFixed(2));
+        totalEl.html(total.toFixed(2));
+      }
+
+      function redesenhaLista () {
+        var listaFiltrada;
+        if (filtro === 'todas') {
+          listaFiltrada = lista;
+        } else if (filtro === 'pendentes') {
+          listaFiltrada = lista.filter(i => !i.checked)
+        } else if (filtro === 'compradas') {
+          listaFiltrada = lista.filter(i => i.checked)
+        }
+
+        mostraLista();
+        listaComprasEl.html('');
+        listaFiltrada.forEach(function (item) {
+          var wrapper = $('<li>').addClass('shop-item list-group-item');
+          var itemEl = $('<div>').addClass('shop-item-text');
+          var valorEl = $('<span>').css('color', 'grey').html('(R$ ' + item.valor.toFixed(2) + ')');
+
+          if (item.checked) {
+            itemEl.addClass('checked');
+          }
+
+          itemEl.html(item.nome + ' ' + valorEl.prop('outerHTML'));
+          wrapper.html(itemEl);
+
+          var buttonsEl = $('<div>').addClass('btn-group').attr('role', 'group').css('float', 'right');
+          var compradoBtnEl = $('<button>').addClass('btn btn-secondary btn-sm').attr('type', 'button').html(
+            $('<span>').addClass('oi oi-check')
+          );
+          compradoBtnEl.click(marcarComprado(item));
+
+          var removerBtnEl = $('<button>').addClass('btn btn-danger btn-sm').attr('type', 'button').html(
+            $('<span>').addClass('oi oi-trash')
+          );
+          removerBtnEl.click(removerItem(item));
+
+          buttonsEl.append(compradoBtnEl);
+          buttonsEl.append(removerBtnEl);
+          wrapper.append(buttonsEl);
+
+          listaComprasEl.append(wrapper);
+        })
+      }
+
+      novoItemFormEl.submit(function () {
+        let nome = novoItemEl.val();
+        let valor = Number(novoItemValorEl.val());
+
+        if (nome.length > 0 && valor > 0.0) {
+          lista.push({nome: nome, valor: valor, checked: false});
+          redesenhaLista();
+          recalculaTotalizadores();
+          novoItemEl.val('');
+          novoItemValorEl.val('0');
+        }
+        return false;
+      });
+
+      filtrosEl.click(function (e) {
+        var filtroEl = $(this);
+        filtrosEl.removeClass('active');
+        filtroEl.addClass('active');
+        e.preventDefault();
+        filtro = filtroEl.data('filtro');
+        redesenhaLista();
+        return false;
+      })
+
+      // Inicialização
+      redesenhaLista();
+      recalculaTotalizadores();
+
+    </script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>

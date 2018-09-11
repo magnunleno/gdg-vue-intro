@@ -45,17 +45,20 @@
             <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'pendentes' }" href="" @click.prevent="filtro = 'pendentes'">Pendentes</a></li>
             <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'compradas' }" href="" @click.prevent="filtro = 'compradas'">Compradas</a></li>
           </ul>
+
           <li class="shop-item list-group-item" v-for="(item, index) in listaFiltrada">
-            <div class="shop-item-text" :class="{ 'checked': item.checked }">{{ item.nome }} <span style="color: grey">(R$ {{ item.valor }})</span></div>
+            <div class="shop-item-text" :class="{ 'checked': item.checked }">{{ item.nome }} <span style="color: grey">(R$ {{ item.valor.toFixed(2) }})</span></div>
             <div class="btn-group" role="group" aria-label="Basic example" style="float: right;">
               <button @click="comprado(item)" type="button" class="btn btn-secondary btn-sm"><span class="oi oi-check"></span></button>
               <button @click="remove(item)" type="button" class="btn btn-danger btn-sm"><span class="oi oi-trash"></span></button>
             </div>
           </li>
+
           <li class="shop-item list-group-item">
             Total: R$ {{ totalLista }} / Total Comprado: R$ {{ totalComprado }}
           </li>
         </template>
+
         <template v-else>
           <li class="list-group-item list-group-item-action disabled">Desculpe, nenhum item cadastrado...</li>
         </template>
@@ -72,7 +75,7 @@
             <label class="sr-only">Valor</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend"><div class="input-group-text">R$</div></div>
-              <input type="number" class="form-control" v-model="novoItemValor">
+              <input type="number" step=".01" min="0" class="form-control" v-model="novoItemValor">
             </div>
           </div>
           <div class="col">
@@ -85,18 +88,22 @@
     <script type="text/javascript">
       var app = new Vue({
         el: '#app',
+
         data: {
           filtro: 'todas',
           novoItem: '',
           novoItemValor: 0.0,
           lista: []
         },
+
         methods: {
           comprado (item) { item.checked = !item.checked },
+
           remove (item) {
             let index = this.lista.findIndex(i => i === item);
             this.lista.splice(index, 1);
           },
+
           adicionar () {
             if (this.novoItem.length == 0 || this.novoItemValor <= 0.0) {
               return
@@ -110,6 +117,7 @@
             this.novoItem = ""
           }
         },
+
         computed: {
           listaFiltrada () {
             if (this.filtro == 'todas') {
@@ -120,20 +128,16 @@
               return this.lista.filter(i => i.checked)
             }
           },
+
           totalLista () {
-            return this.lista.reduce((total, item) => total + item.valor, 0.0)
+            return (this.lista.reduce((total, item) => total + item.valor, 0.0)).toFixed(2)
           },
+
           totalComprado () {
-            return this.lista.filter(i => i.checked).reduce((total, item) => total + item.valor, 0.0)
+            return (this.lista.filter(i => i.checked).reduce((total, item) => total + item.valor, 0.0)).toFixed(2)
           }
         }
       });
     </script>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
 </html>
