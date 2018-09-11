@@ -23,14 +23,21 @@
       .shop-item-text.checked {
         text-decoration: line-through;
       }
+      .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+      }
+      .fade-enter, .fade-leave-to {
+        opacity: 0;
+      }
     </style>
   </head>
+
   <body style="background-color: #e2e2e2">
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
         <a href="#" class="navbar-brand d-flex align-items-center">
           <img src="static/shopping-icon.png" width="30" height="30" alt="" />
-          <strong style="margin-left: 1em;">Lista de Compras</strong>
+          <strong style="margin-left: 1em;">Lista de Compras</strong> <small style="margin-left: .2em">| Vue.js</small>
         </a>
       </div>
     </div>
@@ -46,13 +53,15 @@
             <li class="nav-item"><a class="nav-link" :class="{ 'active' : filtro == 'compradas' }" href="" @click.prevent="filtro = 'compradas'">Compradas</a></li>
           </ul>
 
-          <li class="shop-item list-group-item" v-for="(item, index) in listaFiltrada">
-            <div class="shop-item-text" :class="{ 'checked': item.checked }">{{ item.nome }} <span style="color: grey">(R$ {{ item.valor.toFixed(2) }})</span></div>
-            <div class="btn-group" role="group" aria-label="Basic example" style="float: right;">
-              <button @click="comprado(item)" type="button" class="btn btn-secondary btn-sm"><span class="oi oi-check"></span></button>
-              <button @click="remove(item)" type="button" class="btn btn-danger btn-sm"><span class="oi oi-trash"></span></button>
-            </div>
-          </li>
+          <!--transition-group name="fade" tag="div"-->
+            <li class="shop-item list-group-item" v-for="(item, index) in listaFiltrada" :key="item.nome">
+              <div class="shop-item-text" :class="{ 'checked': item.checked }">{{ item.nome }} <span style="color: grey">(R$ {{ item.valor.toFixed(2) }})</span></div>
+              <div class="btn-group" role="group" aria-label="Basic example" style="float: right;">
+                <button @click="comprado(item)" type="button" class="btn btn-secondary btn-sm"><span class="oi oi-check"></span></button>
+                <button @click="remove(item)" type="button" class="btn btn-danger btn-sm"><span class="oi oi-trash"></span></button>
+              </div>
+            </li>
+          <!--/transition-group-->
 
           <li class="shop-item list-group-item">
             Total: R$ {{ totalLista }} / Total Comprado: R$ {{ totalComprado }}
